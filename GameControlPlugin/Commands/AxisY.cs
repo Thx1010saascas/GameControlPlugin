@@ -9,31 +9,31 @@
         {
         }
 
-        protected override void DoCommand(CommandInfoType commandInfo, int maxValue, string actionParameter)
+        protected override void DoCommand(CommandInfoType commandInfo, Joystick joystick, string actionParameter)
         {
             switch (commandInfo.Value)
             {
                 case -100:
-                    GameControlPlugin.Y = 0;
+                    joystick.Y = 0;
                     break;
                 case 0:
-                    GameControlPlugin.Y = (int)Math.Round(0.5 * maxValue);
+                    joystick.Y = (int)Math.Round(0.5 * joystick.MaxValue);
                     break;
                 case 100:
-                    GameControlPlugin.Y = maxValue;
+                    joystick.Y = joystick.MaxValue;
                     break;
                 default:
-                    GameControlPlugin.Y += (int)Math.Round(0.01 * maxValue * commandInfo.Value);
+                    joystick.Y += (int)Math.Round(0.01 * joystick.MaxValue * commandInfo.Value);
                     break;
             }
 
-            if (GameControlPlugin.Y < 0)
-                GameControlPlugin.Y = 0;
+            if (joystick.Y < 0)
+                joystick.Y = 0;
             
-            if (GameControlPlugin.Y > GameControlPlugin.maxValue)
-                GameControlPlugin.Y = (int)GameControlPlugin.maxValue;
+            if (joystick.Y > joystick.MaxValue)
+                joystick.Y = joystick.MaxValue;
             
-            GameControlPlugin.joystick.SetAxis(GameControlPlugin.Y, GameControlPlugin.id, HID_USAGES.HID_USAGE_Y);
+            joystick.SetAxis(joystick.Y, HID_USAGES.HID_USAGE_Y);
         }
     }
 }

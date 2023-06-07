@@ -9,19 +9,40 @@
 
         protected override void DoAdjustment(CommandInfoType commandInfo, string actionParameter, int ticks)
         {
-            GameControlPlugin.RZ += ticks * commandInfo.Value;
-            if (GameControlPlugin.RZ < 0)
-                GameControlPlugin.RZ = 0;
-            if (GameControlPlugin.RZ > (int)GameControlPlugin.maxValue)
-                GameControlPlugin.RZ = (int)GameControlPlugin.maxValue;
-            GameControlPlugin.joystick.SetAxis(GameControlPlugin.RZ, GameControlPlugin.id, HID_USAGES.HID_USAGE_RZ);
+            Joystick joystick = JoystickManager.GetJoystick(actionParameter);
+
+            joystick.RZ += ticks * commandInfo.Value;
+            
+            if (joystick.RZ < 0)
+                joystick.RZ = 0;
+            
+            if (joystick.RZ > joystick.MaxValue)
+                joystick.RZ = joystick.MaxValue;
+            
+            joystick.SetAxis(joystick.RZ, HID_USAGES.HID_USAGE_RZ);
         }
 
         protected override void RunCommand(string actionParameter)
         {
-            GameControlPlugin.RZ = (int)GameControlPlugin.maxValue / 2;
-            GameControlPlugin.joystick.SetAxis(GameControlPlugin.RZ, GameControlPlugin.id, HID_USAGES.HID_USAGE_RZ);
+            Joystick joystick = JoystickManager.GetJoystick(actionParameter);
+
+            joystick.RZ = joystick.MaxValue / 2;
+            
+            joystick.SetAxis(joystick.RZ, HID_USAGES.HID_USAGE_RZ);
+            
             this.ActionImageChanged(actionParameter);
+        }
+        
+        protected override string GetAdjustmentValue(string actionParameter)
+        {
+            CommandInfoType commandInfo = GameControlPlugin.GetCommandInfo(actionParameter);
+
+            if (!commandInfo.DrawNumbers)
+                return string.Empty;
+
+            Joystick joystick = JoystickManager.GetJoystick(actionParameter);
+
+            return GetAdjustmentValue(joystick.RZ, joystick.MaxValue);
         }
     }
 }

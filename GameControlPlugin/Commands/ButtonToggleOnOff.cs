@@ -25,8 +25,12 @@
                 GameControlPlugin.InWarning = false;
             }
 
+            Joystick joystick = JoystickManager.GetJoystick(actionParameter);
+
             GameControlPlugin.buttons[commandInfo.Value] = !GameControlPlugin.buttons[commandInfo.Value];
-            GameControlPlugin.joystick.SetBtn(GameControlPlugin.buttons[commandInfo.Value], GameControlPlugin.id, (uint)commandInfo.Value);
+            
+            joystick.SetBtn(GameControlPlugin.buttons[commandInfo.Value], (uint)commandInfo.Value);
+            
             this.ActionImageChanged(actionParameter);
         }
 

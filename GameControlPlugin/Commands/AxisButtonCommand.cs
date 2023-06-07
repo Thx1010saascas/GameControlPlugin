@@ -29,12 +29,14 @@
                 GameControlPlugin.InWarning = false;
             }
 
-            DoCommand(commandInfo, (int)GameControlPlugin.maxValue, actionParameter);
+            Joystick joystick = JoystickManager.GetJoystick(actionParameter);
+
+            DoCommand(commandInfo, joystick, actionParameter);
 
             this.ActionImageChanged(actionParameter);
         }
 
-        protected abstract void DoCommand(CommandInfoType commandInfo, int maxValue, String actionParameter);
+        protected abstract void DoCommand(CommandInfoType commandInfo, Joystick joystick, String actionParameter);
 
         protected override BitmapImage GetCommandImage(string actionParameter, PluginImageSize imageSize)
         {

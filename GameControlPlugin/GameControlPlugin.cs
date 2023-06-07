@@ -4,27 +4,9 @@ namespace Loupedeck.GameControlPlugin
     using System.Diagnostics;
     using System.IO;
 
-    using vJoyInterfaceWrap;
-
     public class GameControlPlugin : Plugin
     {
-        public static vJoy joystick;
-        public static vJoy.JoystickState iReport;
-        public static uint id = 1;
-        public static int X;
-        public static int Y;
-        public static int Z;
-        public static int RX;
-        public static int RY;
-        public static int RZ;
-        public static int SL0;
-        public static int SL1;
         public static bool[] buttons = new bool[200];
-        public static uint count = 0;
-        public static long maxValue;
-        public static int nButtons;
-        public static int ContPovNumber;
-        public static int DiscPovNumber;
         public static bool DefaultDrawNumbers = true;
         public static bool DefaultDrawToggleIndicators = true;
         public static BitmapColor DefaultLabelBackgroundColor = BitmapColor.Transparent;
@@ -85,400 +67,335 @@ namespace Loupedeck.GameControlPlugin
             PluginWarning = "";
             PluginWarningStopwatch = new Stopwatch();
             InWarning = false;
-            joystick = new vJoy();
-            iReport = new vJoy.JoystickState();
-            if (!joystick.vJoyEnabled())
+            
+            JoystickManager.Initialise(this);
+            
+            int result1 = 1;
+            string pluginDataDirectory = this.GetPluginDataDirectory();
+            if (IoHelpers.EnsureDirectoryExists(pluginDataDirectory))
             {
-                Console.WriteLine("vJoy driver not enabled: Failed Getting vJoy attributes.\n");
-            }
-            else
-            {
-                
-                
-                int result1 = 1;
-                string pluginDataDirectory = this.GetPluginDataDirectory();
-                if (IoHelpers.EnsureDirectoryExists(pluginDataDirectory))
+                string path = Path.Combine(pluginDataDirectory, "Settings.txt");
+                if (File.Exists(path))
                 {
-                    string path = Path.Combine(pluginDataDirectory, "Settings.txt");
-                    if (File.Exists(path))
+                    using (StreamReader streamReader = new StreamReader(path))
                     {
-                        using (StreamReader streamReader = new StreamReader(path))
+                        for (string text = streamReader.ReadLine(); text != null; text = streamReader.ReadLine())
                         {
-                            for (string text = streamReader.ReadLine(); text != null; text = streamReader.ReadLine())
+                            string str = text.Trim();
+                            if (str.Length > 0 && str[0] != '#')
                             {
-                                string str = text.Trim();
-                                if (str.Length > 0 && str[0] != '#')
+                                string[] strArray = text.Split("=");
+                                string lower1 = strArray[0].Trim().ToLower();
+                                if (strArray.Length == 2)
                                 {
-                                    string[] strArray = text.Split("=");
-                                    string lower1 = strArray[0].Trim().ToLower();
-                                    if (strArray.Length == 2)
+                                    string lower2 = strArray[1].Trim().ToLower();
+                                    switch (lower1)
                                     {
-                                        string lower2 = strArray[1].Trim().ToLower();
-                                        switch (lower1)
-                                        {
-                                            case "adjustmentspeed":
-                                            case "as":
-                                                switch (lower2)
-                                                {
-                                                    case "f":
-                                                    case "fast":
-                                                        DefaultAdjustmentSpeed = 500;
-                                                        continue;
-                                                    case "n":
-                                                    case "norm":
-                                                    case "normal":
-                                                        DefaultAdjustmentSpeed = 100;
-                                                        continue;
-                                                    case "s":
-                                                    case "slow":
-                                                        DefaultAdjustmentSpeed = 25;
-                                                        continue;
-                                                    default:
-                                                        if (!int.TryParse(lower2, out DefaultAdjustmentSpeed))
-                                                        {
-                                                            this.OnPluginStatusChanged(Loupedeck.PluginStatus.Error, "Invalid Default Adjustment Speed (not a number). Fix in settings.txt and restart.");
-                                                        }
-
-                                                        continue;
-                                                }
-                                            case "bt":
-                                            case "buttontype":
-                                                switch (lower2)
-                                                {
-                                                    case "black round":
-                                                    case "br":
-                                                    case "bround":
-                                                        DefaultButtonPath = EmbeddedResources.FindFile("BlackRoundButton.png");
-                                                        continue;
-                                                    case "ccw":
-                                                    case "counterclockwise":
-                                                        DefaultButtonPath = EmbeddedResources.FindFile("BlackSquareCCWButton.png");
-                                                        continue;
-                                                    case "clockwise":
-                                                    case "cw":
-                                                        DefaultButtonPath = EmbeddedResources.FindFile("BlackSquareCWButton.png");
-                                                        continue;
-                                                    case "d":
-                                                    case "down":
-                                                        DefaultButtonPath = EmbeddedResources.FindFile("BlackSquareDownButton.png");
-                                                        continue;
-                                                    case "gr":
-                                                    case "gray round":
-                                                    case "ground":
-                                                        DefaultButtonPath = EmbeddedResources.FindFile("GrayRoundButton.png");
-                                                        continue;
-                                                    case "gray square":
-                                                    case "gs":
-                                                    case "gsquare":
-                                                        DefaultButtonPath = EmbeddedResources.FindFile("GraySquareButton.png");
-                                                        continue;
-                                                    case "l":
-                                                    case "left":
-                                                        DefaultButtonPath = EmbeddedResources.FindFile("BlackSquareLeftButton.png");
-                                                        continue;
-                                                    case "r":
-                                                    case "right":
-                                                        DefaultButtonPath = EmbeddedResources.FindFile("BlackSquareRightButton.png");
-                                                        continue;
-                                                    case "red round":
-                                                    case "rr":
-                                                    case "rround":
-                                                        DefaultButtonPath = EmbeddedResources.FindFile("RedRoundButton.png");
-                                                        continue;
-                                                    case "u":
-                                                    case "up":
-                                                        DefaultButtonPath = EmbeddedResources.FindFile("BlackSquareUpButton.png");
-                                                        continue;
-                                                    default:
-                                                        DefaultButtonPath = EmbeddedResources.FindFile("BlackSquareButton.png");
-                                                        continue;
-                                                }
-                                            case "dn":
-                                            case "drawnumbers":
-                                                switch (lower2)
-                                                {
-                                                    case "true":
-                                                    case "on":
-                                                    case "yes":
-                                                        DefaultDrawNumbers = true;
-                                                        continue;
-                                                    case "false":
-                                                    case "off":
-                                                    case "no":
-                                                        DefaultDrawNumbers = false;
-                                                        continue;
-                                                    default:
-                                                        continue;
-                                                }
-                                            case "drawtoggleindicators":
-                                            case "dti":
-                                                switch (lower2)
-                                                {
-                                                    case "true":
-                                                    case "on":
-                                                    case "yes":
-                                                        DefaultDrawToggleIndicators = true;
-                                                        continue;
-                                                    case "false":
-                                                    case "off":
-                                                    case "no":
-                                                        DefaultDrawToggleIndicators = false;
-                                                        continue;
-                                                    default:
-                                                        continue;
-                                                }
-                                            case "dx":
-                                            case "dxsendtype":
-                                            case "dxst":
-                                                switch (lower2)
-                                                {
-                                                    case "pulse":
-                                                    case "p":
-                                                        DefaultDXSendType = 0;
-                                                        continue;
-                                                    case "hold":
-                                                    case "h":
-                                                        DefaultDXSendType = 1;
-                                                        continue;
-                                                    default:
-                                                        continue;
-                                                }
-                                            case "labelbackgroundcolor":
-                                            case "lb":
-                                            case "lbc":
-                                                switch (lower2)
-                                                {
-                                                    case "black":
-                                                        DefaultLabelBackgroundColor = BitmapColor.Black;
-                                                        continue;
-                                                    case "blue":
-                                                        DefaultLabelBackgroundColor = new BitmapColor(50, 50, 200);
-                                                        continue;
-                                                    case "gray":
-                                                        DefaultLabelBackgroundColor = new BitmapColor(128, 128, 128);
-                                                        continue;
-                                                    case "green":
-                                                        DefaultLabelBackgroundColor = new BitmapColor(50, 200, 50);
-                                                        continue;
-                                                    case "none":
-                                                        DefaultLabelBackgroundColor = BitmapColor.Transparent;
-                                                        continue;
-                                                    case "purple":
-                                                        DefaultLabelBackgroundColor = new BitmapColor(150, 50, 200);
-                                                        continue;
-                                                    case "red":
-                                                        DefaultLabelBackgroundColor = new BitmapColor(200, 50, 50);
-                                                        continue;
-                                                    default:
-                                                        uint result2 = 0;
-                                                        if (!uint.TryParse(lower2, out result2))
-                                                        {
-                                                            this.OnPluginStatusChanged(Loupedeck.PluginStatus.Error, "Invalid Default Label Background Color. Fix in settings.txt and restart.");
-                                                            continue;
-                                                        }
-
-                                                        DefaultLabelBackgroundColor = new BitmapColor(result2);
-                                                        continue;
-                                                }
-                                            case "labelcolor":
-                                            case "lc":
-                                                switch (lower2)
-                                                {
-                                                    case "black":
-                                                        DefaultLabelColor = BitmapColor.Black;
-                                                        continue;
-                                                    case "blue":
-                                                        DefaultLabelColor = new BitmapColor(50, 50, 200);
-                                                        continue;
-                                                    case "gray":
-                                                        DefaultLabelColor = new BitmapColor(128, 128, 128);
-                                                        continue;
-                                                    case "green":
-                                                        DefaultLabelColor = new BitmapColor(50, 200, 50);
-                                                        continue;
-                                                    case "purple":
-                                                        DefaultLabelColor = new BitmapColor(150, 50, 200);
-                                                        continue;
-                                                    case "red":
-                                                        DefaultLabelColor = new BitmapColor(200, 50, 50);
-                                                        continue;
-                                                    case "white":
-                                                        DefaultLabelColor = BitmapColor.White;
-                                                        continue;
-                                                    default:
-                                                        uint result3 = 0;
-                                                        if (!uint.TryParse(lower2, out result3))
-                                                        {
-                                                            this.OnPluginStatusChanged(Loupedeck.PluginStatus.Error, "Invalid Default Label Color. Fix in settings.txt and restart.");
-                                                            continue;
-                                                        }
-
-                                                        DefaultLabelColor = new BitmapColor(result3);
-                                                        continue;
-                                                }
-                                            case "labelpos":
-                                            case "lp":
-                                                switch (lower2)
-                                                {
-                                                    case "top":
-                                                    case "t":
-                                                        DefaultLabelPos = 7;
-                                                        continue;
-                                                    case "center":
-                                                    case "c":
-                                                        DefaultLabelPos = 40;
-                                                        continue;
-                                                    case "bottom":
-                                                    case "b":
-                                                        DefaultLabelPos = 73;
-                                                        continue;
-                                                    default:
-                                                        if (!int.TryParse(lower2, out DefaultLabelPos))
-                                                        {
-                                                            this.OnPluginStatusChanged(Loupedeck.PluginStatus.Error, "Invalid Default Label Position (must be top, center, bottom, or a number). Fix in settings.txt and restart.");
-                                                        }
-
-                                                        continue;
-                                                }
-                                            case "labelsize":
-                                            case "ls":
-                                                int result4 = 14;
-                                                if (!int.TryParse(lower2, out result4))
-                                                {
-                                                    this.OnPluginStatusChanged(Loupedeck.PluginStatus.Error, "Invalid Default Label Size (must be a number). Fix in settings.txt and restart.");
+                                        case "adjustmentspeed":
+                                        case "as":
+                                            switch (lower2)
+                                            {
+                                                case "f":
+                                                case "fast":
+                                                    DefaultAdjustmentSpeed = 500;
                                                     continue;
-                                                }
-
-                                                DefaultLabelSize = 14;
-                                                continue;
-                                            case "rotarytype":
-                                            case "rt":
-                                                if (!(lower2 == "gray"))
-                                                {
-                                                    int num = lower2 == "g" ? 1 : 0;
-                                                }
-
-                                                DefaultRotaryPath = EmbeddedResources.FindFile("GrayRotary.png");
-                                                continue;
-                                            case "tab":
-                                            case "toggleasbutton":
-                                                switch (lower2)
-                                                {
-                                                    case "true":
-                                                    case "on":
-                                                    case "yes":
-                                                        DefaultToggleAsButton = true;
-                                                        continue;
-                                                    case "false":
-                                                    case "off":
-                                                    case "no":
-                                                        DefaultToggleAsButton = false;
-                                                        continue;
-                                                    default:
-                                                        continue;
-                                                }
-                                            case "vjoy number":
-                                                if (int.TryParse(lower2, out result1))
-                                                {
-                                                    if (result1 > 0 && result1 < 17)
+                                                case "n":
+                                                case "norm":
+                                                case "normal":
+                                                    DefaultAdjustmentSpeed = 100;
+                                                    continue;
+                                                case "s":
+                                                case "slow":
+                                                    DefaultAdjustmentSpeed = 25;
+                                                    continue;
+                                                default:
+                                                    if (!int.TryParse(lower2, out DefaultAdjustmentSpeed))
                                                     {
-                                                        id = (uint)result1;
+                                                        this.OnPluginStatusChanged(Loupedeck.PluginStatus.Error, "Invalid Default Adjustment Speed (not a number). Fix in settings.txt and restart.");
+                                                    }
+
+                                                    continue;
+                                            }
+                                        case "bt":
+                                        case "buttontype":
+                                            switch (lower2)
+                                            {
+                                                case "black round":
+                                                case "br":
+                                                case "bround":
+                                                    DefaultButtonPath = EmbeddedResources.FindFile("BlackRoundButton.png");
+                                                    continue;
+                                                case "ccw":
+                                                case "counterclockwise":
+                                                    DefaultButtonPath = EmbeddedResources.FindFile("BlackSquareCCWButton.png");
+                                                    continue;
+                                                case "clockwise":
+                                                case "cw":
+                                                    DefaultButtonPath = EmbeddedResources.FindFile("BlackSquareCWButton.png");
+                                                    continue;
+                                                case "d":
+                                                case "down":
+                                                    DefaultButtonPath = EmbeddedResources.FindFile("BlackSquareDownButton.png");
+                                                    continue;
+                                                case "gr":
+                                                case "gray round":
+                                                case "ground":
+                                                    DefaultButtonPath = EmbeddedResources.FindFile("GrayRoundButton.png");
+                                                    continue;
+                                                case "gray square":
+                                                case "gs":
+                                                case "gsquare":
+                                                    DefaultButtonPath = EmbeddedResources.FindFile("GraySquareButton.png");
+                                                    continue;
+                                                case "l":
+                                                case "left":
+                                                    DefaultButtonPath = EmbeddedResources.FindFile("BlackSquareLeftButton.png");
+                                                    continue;
+                                                case "r":
+                                                case "right":
+                                                    DefaultButtonPath = EmbeddedResources.FindFile("BlackSquareRightButton.png");
+                                                    continue;
+                                                case "red round":
+                                                case "rr":
+                                                case "rround":
+                                                    DefaultButtonPath = EmbeddedResources.FindFile("RedRoundButton.png");
+                                                    continue;
+                                                case "u":
+                                                case "up":
+                                                    DefaultButtonPath = EmbeddedResources.FindFile("BlackSquareUpButton.png");
+                                                    continue;
+                                                default:
+                                                    DefaultButtonPath = EmbeddedResources.FindFile("BlackSquareButton.png");
+                                                    continue;
+                                            }
+                                        case "dn":
+                                        case "drawnumbers":
+                                            switch (lower2)
+                                            {
+                                                case "true":
+                                                case "on":
+                                                case "yes":
+                                                    DefaultDrawNumbers = true;
+                                                    continue;
+                                                case "false":
+                                                case "off":
+                                                case "no":
+                                                    DefaultDrawNumbers = false;
+                                                    continue;
+                                                default:
+                                                    continue;
+                                            }
+                                        case "drawtoggleindicators":
+                                        case "dti":
+                                            switch (lower2)
+                                            {
+                                                case "true":
+                                                case "on":
+                                                case "yes":
+                                                    DefaultDrawToggleIndicators = true;
+                                                    continue;
+                                                case "false":
+                                                case "off":
+                                                case "no":
+                                                    DefaultDrawToggleIndicators = false;
+                                                    continue;
+                                                default:
+                                                    continue;
+                                            }
+                                        case "dx":
+                                        case "dxsendtype":
+                                        case "dxst":
+                                            switch (lower2)
+                                            {
+                                                case "pulse":
+                                                case "p":
+                                                    DefaultDXSendType = 0;
+                                                    continue;
+                                                case "hold":
+                                                case "h":
+                                                    DefaultDXSendType = 1;
+                                                    continue;
+                                                default:
+                                                    continue;
+                                            }
+                                        case "labelbackgroundcolor":
+                                        case "lb":
+                                        case "lbc":
+                                            switch (lower2)
+                                            {
+                                                case "black":
+                                                    DefaultLabelBackgroundColor = BitmapColor.Black;
+                                                    continue;
+                                                case "blue":
+                                                    DefaultLabelBackgroundColor = new BitmapColor(50, 50, 200);
+                                                    continue;
+                                                case "gray":
+                                                    DefaultLabelBackgroundColor = new BitmapColor(128, 128, 128);
+                                                    continue;
+                                                case "green":
+                                                    DefaultLabelBackgroundColor = new BitmapColor(50, 200, 50);
+                                                    continue;
+                                                case "none":
+                                                    DefaultLabelBackgroundColor = BitmapColor.Transparent;
+                                                    continue;
+                                                case "purple":
+                                                    DefaultLabelBackgroundColor = new BitmapColor(150, 50, 200);
+                                                    continue;
+                                                case "red":
+                                                    DefaultLabelBackgroundColor = new BitmapColor(200, 50, 50);
+                                                    continue;
+                                                default:
+                                                    uint result2 = 0;
+                                                    if (!uint.TryParse(lower2, out result2))
+                                                    {
+                                                        this.OnPluginStatusChanged(Loupedeck.PluginStatus.Error, "Invalid Default Label Background Color. Fix in settings.txt and restart.");
                                                         continue;
                                                     }
 
-                                                    this.OnPluginStatusChanged(Loupedeck.PluginStatus.Error, "Invalid vJoy ID.  Value must be between 1 and 16.  Please fix in settings.txt and restart");
+                                                    DefaultLabelBackgroundColor = new BitmapColor(result2);
+                                                    continue;
+                                            }
+                                        case "labelcolor":
+                                        case "lc":
+                                            switch (lower2)
+                                            {
+                                                case "black":
+                                                    DefaultLabelColor = BitmapColor.Black;
+                                                    continue;
+                                                case "blue":
+                                                    DefaultLabelColor = new BitmapColor(50, 50, 200);
+                                                    continue;
+                                                case "gray":
+                                                    DefaultLabelColor = new BitmapColor(128, 128, 128);
+                                                    continue;
+                                                case "green":
+                                                    DefaultLabelColor = new BitmapColor(50, 200, 50);
+                                                    continue;
+                                                case "purple":
+                                                    DefaultLabelColor = new BitmapColor(150, 50, 200);
+                                                    continue;
+                                                case "red":
+                                                    DefaultLabelColor = new BitmapColor(200, 50, 50);
+                                                    continue;
+                                                case "white":
+                                                    DefaultLabelColor = BitmapColor.White;
+                                                    continue;
+                                                default:
+                                                    uint result3 = 0;
+                                                    if (!uint.TryParse(lower2, out result3))
+                                                    {
+                                                        this.OnPluginStatusChanged(Loupedeck.PluginStatus.Error, "Invalid Default Label Color. Fix in settings.txt and restart.");
+                                                        continue;
+                                                    }
+
+                                                    DefaultLabelColor = new BitmapColor(result3);
+                                                    continue;
+                                            }
+                                        case "labelpos":
+                                        case "lp":
+                                            switch (lower2)
+                                            {
+                                                case "top":
+                                                case "t":
+                                                    DefaultLabelPos = 7;
+                                                    continue;
+                                                case "center":
+                                                case "c":
+                                                    DefaultLabelPos = 40;
+                                                    continue;
+                                                case "bottom":
+                                                case "b":
+                                                    DefaultLabelPos = 73;
+                                                    continue;
+                                                default:
+                                                    if (!int.TryParse(lower2, out DefaultLabelPos))
+                                                    {
+                                                        this.OnPluginStatusChanged(Loupedeck.PluginStatus.Error, "Invalid Default Label Position (must be top, center, bottom, or a number). Fix in settings.txt and restart.");
+                                                    }
+
+                                                    continue;
+                                            }
+                                        case "labelsize":
+                                        case "ls":
+                                            int result4 = 14;
+                                            if (!int.TryParse(lower2, out result4))
+                                            {
+                                                this.OnPluginStatusChanged(Loupedeck.PluginStatus.Error, "Invalid Default Label Size (must be a number). Fix in settings.txt and restart.");
+                                                continue;
+                                            }
+
+                                            DefaultLabelSize = 14;
+                                            continue;
+                                        case "rotarytype":
+                                        case "rt":
+                                            if (!(lower2 == "gray"))
+                                            {
+                                                int num = lower2 == "g" ? 1 : 0;
+                                            }
+
+                                            DefaultRotaryPath = EmbeddedResources.FindFile("GrayRotary.png");
+                                            continue;
+                                        case "tab":
+                                        case "toggleasbutton":
+                                            switch (lower2)
+                                            {
+                                                case "true":
+                                                case "on":
+                                                case "yes":
+                                                    DefaultToggleAsButton = true;
+                                                    continue;
+                                                case "false":
+                                                case "off":
+                                                case "no":
+                                                    DefaultToggleAsButton = false;
+                                                    continue;
+                                                default:
+                                                    continue;
+                                            }
+                                        case "vjoy number":
+                                            if (int.TryParse(lower2, out result1))
+                                            {
+                                                if (result1 > 0 && result1 < 17)
+                                                {
+                                                    JoystickManager.SetDefaultJoystickId((uint)result1);
                                                     continue;
                                                 }
 
-                                                this.OnPluginStatusChanged(Loupedeck.PluginStatus.Error, "Invalid vJoy ID.  A number between 1 and 16 must be set.  Please fix in settings.txt and restart");
+                                                this.OnPluginStatusChanged(Loupedeck.PluginStatus.Error, "Invalid vJoy ID.  Value must be between 1 and 16.  Please fix in settings.txt and restart");
                                                 continue;
-                                            default:
-                                                continue;
-                                        }
-                                    }
+                                            }
 
-                                    this.OnPluginStatusChanged(Loupedeck.PluginStatus.Error, "Invalid settings.txt option format (must be [Option] = [Value]). Fix in settings.txt and restart.");
+                                            this.OnPluginStatusChanged(Loupedeck.PluginStatus.Error, "Invalid Default vJoy ID.  A number between 1 and 16 must be set.  Please fix in settings.txt and restart");
+                                            continue;
+                                        default:
+                                            continue;
+                                    }
                                 }
+
+                                this.OnPluginStatusChanged(Loupedeck.PluginStatus.Error, "Invalid settings.txt option format (must be [Option] = [Value]). Fix in settings.txt and restart.");
                             }
                         }
                     }
-                    else
-                    {
-                        using (StreamWriter streamWriter = new StreamWriter(path))
-                        {
-                            streamWriter.WriteLine("vJoy Number = 1");
-                            streamWriter.WriteLine("");
-                            streamWriter.WriteLine("## Defaults ##");
-                            streamWriter.WriteLine("LabelBackgroundColor = None");
-                            streamWriter.WriteLine("LabelColor = White");
-                            streamWriter.WriteLine("LabelSize = 14");
-                            streamWriter.WriteLine("DrawNumbers = True");
-                            streamWriter.WriteLine("ButtonType = Black Square");
-                            streamWriter.WriteLine("RotaryType = Gray");
-                            streamWriter.WriteLine("LabelPos = Top");
-                            streamWriter.WriteLine("DrawToggleIndicators = True");
-                            streamWriter.WriteLine("DXSendType = Pulsed");
-                            streamWriter.WriteLine("ToggleAsButton = False");
-                            streamWriter.WriteLine("AdjustmentSpeed = 100");
-                        }
-                    }
                 }
-
-                VjdStat vjdStatus = joystick.GetVJDStatus(id);
-                switch (vjdStatus)
+                else
                 {
-                    case VjdStat.VJD_STAT_OWN:
-                        this.OnPluginStatusChanged(Loupedeck.PluginStatus.Error, "vJoy Device is already owned by this feeder");
-                        goto case VjdStat.VJD_STAT_FREE;
-                    case VjdStat.VJD_STAT_FREE:
-                        joystick.GetVJDAxisExist(id, HID_USAGES.HID_USAGE_X);
-                        joystick.GetVJDAxisExist(id, HID_USAGES.HID_USAGE_Y);
-                        joystick.GetVJDAxisExist(id, HID_USAGES.HID_USAGE_Z);
-                        joystick.GetVJDAxisExist(id, HID_USAGES.HID_USAGE_RX);
-                        joystick.GetVJDAxisExist(id, HID_USAGES.HID_USAGE_RY);
-                        joystick.GetVJDAxisExist(id, HID_USAGES.HID_USAGE_RZ);
-                        joystick.GetVJDAxisExist(id, HID_USAGES.HID_USAGE_SL0);
-                        joystick.GetVJDAxisExist(id, HID_USAGES.HID_USAGE_SL1);
-                        nButtons = joystick.GetVJDButtonNumber(id);
-                        ContPovNumber = joystick.GetVJDContPovNumber(id);
-                        DiscPovNumber = joystick.GetVJDDiscPovNumber(id);
-                        uint DllVer = 0;
-                        uint DrvVer = 0;
-                        if (!joystick.DriverMatch(ref DllVer, ref DrvVer))
-                            this.OnPluginStatusChanged(Loupedeck.PluginStatus.Error, "Version of Driver does NOT match DLL Version.");
-                        switch (vjdStatus)
-                        {
-                            case VjdStat.VJD_STAT_OWN:
-                                this.OnPluginStatusChanged(Loupedeck.PluginStatus.Error, "Failed to acquire vJoy device");
-                                return;
-                            case VjdStat.VJD_STAT_FREE:
-                                if (joystick.AcquireVJD(id))
-                                    break;
-                                goto case VjdStat.VJD_STAT_OWN;
-                        }
-
-                        joystick.GetVJDAxisMax(id, HID_USAGES.HID_USAGE_X, ref maxValue);
-                        joystick.ResetVJD(id);
-                        for (uint nBtn = 0; nBtn < nButtons; ++nBtn)
-                            joystick.SetBtn(false, id, nBtn);
-                        int num1;
-                        RX = num1 = (int)maxValue / 2;
-                        RX = num1;
-                        RX = num1;
-                        Z = num1;
-                        Y = num1;
-                        X = num1;
-                        SL0 = SL1 = 0;
-                        break;
-                    case VjdStat.VJD_STAT_BUSY:
-                        this.OnPluginStatusChanged(Loupedeck.PluginStatus.Error, "vJoy Device is already owned by another feeder. Cannot continue");
-                        break;
-                    case VjdStat.VJD_STAT_MISS:
-                        this.OnPluginStatusChanged(Loupedeck.PluginStatus.Error, "vJoy Device is not installed or disabled.Cannot continue");
-                        break;
-                    default:
-                        this.OnPluginStatusChanged(Loupedeck.PluginStatus.Error, "vJoy Device general error. Cannot continue");
-                        break;
+                    using (StreamWriter streamWriter = new StreamWriter(path))
+                    {
+                        streamWriter.WriteLine("vJoy Number = 1");
+                        streamWriter.WriteLine("");
+                        streamWriter.WriteLine("## Defaults ##");
+                        streamWriter.WriteLine("LabelBackgroundColor = None");
+                        streamWriter.WriteLine("LabelColor = White");
+                        streamWriter.WriteLine("LabelSize = 14");
+                        streamWriter.WriteLine("DrawNumbers = True");
+                        streamWriter.WriteLine("ButtonType = Black Square");
+                        streamWriter.WriteLine("RotaryType = Gray");
+                        streamWriter.WriteLine("LabelPos = Top");
+                        streamWriter.WriteLine("DrawToggleIndicators = True");
+                        streamWriter.WriteLine("DXSendType = Pulsed");
+                        streamWriter.WriteLine("ToggleAsButton = False");
+                        streamWriter.WriteLine("AdjustmentSpeed = 100");
+                    }
                 }
             }
         }

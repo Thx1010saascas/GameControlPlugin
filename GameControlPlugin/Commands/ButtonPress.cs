@@ -28,8 +28,12 @@
                 GameControlPlugin.InWarning = false;
             }
 
-            GameControlPlugin.joystick.SetBtn(true, GameControlPlugin.id, (uint)CommandInfo.Value);
-            Task.Delay(50).ContinueWith(t => GameControlPlugin.joystick.SetBtn(false, GameControlPlugin.id, (uint)CommandInfo.Value));
+            Joystick joystick = JoystickManager.GetJoystick(actionParameter);
+            
+            joystick.SetBtn(true, (uint)CommandInfo.Value);
+            
+            Task.Delay(JoystickManager.ButtonPressDelay).ContinueWith(t => joystick.SetBtn(false, (uint)CommandInfo.Value));
+            
             this.ActionImageChanged(actionParameter);
         }
 

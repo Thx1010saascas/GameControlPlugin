@@ -14,6 +14,7 @@
         {
             if (GameControlPlugin.PluginError != "")
                 this.Plugin.OnPluginStatusChanged(PluginStatus.Error, GameControlPlugin.PluginError);
+            
             if (GameControlPlugin.PluginWarning != "" && !GameControlPlugin.InWarning)
             {
                 this.Plugin.OnPluginStatusChanged(PluginStatus.Warning, GameControlPlugin.PluginWarning);
@@ -34,16 +35,8 @@
 
         protected abstract void DoAdjustment(CommandInfoType commandInfo, string actionParameter, int ticks);
 
-        protected override void RunCommand(string actionParameter)
+        protected string GetAdjustmentValue(int value, int maxValue)
         {
-            GameControlPlugin.Y = (int)GameControlPlugin.maxValue / 2;
-            GameControlPlugin.joystick.SetAxis(GameControlPlugin.Y, GameControlPlugin.id, HID_USAGES.HID_USAGE_Y);
-            this.ActionImageChanged(actionParameter);
-        }
-
-        protected override string GetAdjustmentValue(string actionParameter)
-        {
-            CommandInfoType commandInfo = GameControlPlugin.GetCommandInfo(actionParameter);
             if (GameControlPlugin.PluginError != "")
                 this.Plugin.OnPluginStatusChanged(PluginStatus.Error, GameControlPlugin.PluginError);
             if (GameControlPlugin.PluginWarning != "" && !GameControlPlugin.InWarning)
@@ -59,14 +52,13 @@
                 GameControlPlugin.InWarning = false;
             }
 
-            return commandInfo.DrawNumbers ? ((int)((GameControlPlugin.Y / (double)GameControlPlugin.maxValue * 2.0 - 1.0) * 100.0)) + "%" : "";
+            return ((int)((value / (double)maxValue * 2.0 - 1.0) * 100.0)) + "%";
         }
 
-        protected override BitmapImage GetCommandImage(
-            string actionParameter,
-            PluginImageSize imageSize)
+        protected override BitmapImage GetCommandImage(string actionParameter, PluginImageSize imageSize)
         {
             CommandInfoType commandInfo = GameControlPlugin.GetCommandInfo(actionParameter);
+            
             if (GameControlPlugin.PluginError != "")
                 this.Plugin.OnPluginStatusChanged(PluginStatus.Error, GameControlPlugin.PluginError);
             if (GameControlPlugin.PluginWarning != "" && !GameControlPlugin.InWarning)

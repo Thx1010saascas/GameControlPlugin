@@ -90,6 +90,7 @@
         <Compile Include="Commands\Pov3Press.cs" />
         <Compile Include="Commands\Pov4Press.cs" />
         <Compile Include="Commands\PovCommand.cs" />
+        <Compile Include="JoystickManager.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="GameControlApplication.cs" />
         <Compile Include="GameControlPlugin.cs" />

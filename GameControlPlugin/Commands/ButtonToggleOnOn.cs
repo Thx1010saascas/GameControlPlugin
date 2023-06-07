@@ -28,16 +28,20 @@
                 GameControlPlugin.InWarning = false;
             }
 
+            Joystick joystick = JoystickManager.GetJoystick(actionParameter);
+
             GameControlPlugin.buttons[CommandInfo.Value] = !GameControlPlugin.buttons[CommandInfo.Value];
             GameControlPlugin.buttons[CommandInfo.Value + 1] = !GameControlPlugin.buttons[CommandInfo.Value];
-            GameControlPlugin.joystick.SetBtn(GameControlPlugin.buttons[CommandInfo.Value], GameControlPlugin.id, (uint)CommandInfo.Value);
-            GameControlPlugin.joystick.SetBtn(GameControlPlugin.buttons[CommandInfo.Value + 1], GameControlPlugin.id, (uint)(CommandInfo.Value + 1));
+            
+            joystick.SetBtn(GameControlPlugin.buttons[CommandInfo.Value], (uint)CommandInfo.Value);
+            joystick.SetBtn(GameControlPlugin.buttons[CommandInfo.Value + 1], (uint)(CommandInfo.Value + 1));
+            
             if (CommandInfo.DXSendType == 0)
             {
                 if (GameControlPlugin.buttons[CommandInfo.Value])
-                    Task.Delay(50).ContinueWith(t => GameControlPlugin.joystick.SetBtn(false, GameControlPlugin.id, (uint)CommandInfo.Value));
+                    Task.Delay(JoystickManager.ButtonPressDelay).ContinueWith(t => joystick.SetBtn(false, (uint)CommandInfo.Value));
                 else
-                    Task.Delay(50).ContinueWith(t => GameControlPlugin.joystick.SetBtn(false, GameControlPlugin.id, (uint)(CommandInfo.Value + 1)));
+                    Task.Delay(JoystickManager.ButtonPressDelay).ContinueWith(t => joystick.SetBtn(false, (uint)(CommandInfo.Value + 1)));
             }
 
             this.ActionImageChanged(actionParameter);

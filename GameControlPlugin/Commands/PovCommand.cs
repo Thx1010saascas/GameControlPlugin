@@ -1,6 +1,5 @@
 ﻿namespace Loupedeck.GameControlPlugin.Commands
 {
-    using System;
     using System.Threading.Tasks;
 
     internal abstract class PovCommand : PluginDynamicCommand
@@ -30,8 +29,12 @@
                 GameControlPlugin.InWarning = false;
             }
 
-            GameControlPlugin.joystick.SetDiscPov(commandInfo.Value, GameControlPlugin.id, pov);
-            Task.Delay(50).ContinueWith(t => GameControlPlugin.joystick.SetDiscPov(-1, GameControlPlugin.id, pov));
+            Joystick joystick = JoystickManager.GetJoystick(actionParameter);
+
+            joystick.SetDiscPov(commandInfo.Value, pov);
+            
+            Task.Delay(JoystickManager.ButtonPressDelay).ContinueWith(t => joystick.SetDiscPov(-1, pov));
+            
             this.ActionImageChanged(actionParameter);
         }
 

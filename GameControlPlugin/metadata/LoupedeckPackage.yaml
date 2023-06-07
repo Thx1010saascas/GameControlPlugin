@@ -15,13 +15,13 @@ displayName: Game Control
 pluginFileName: GameControlPlugin.dll
 
 # Plugin version.
-version: 0.1
+version: 0.6
 
 # Author of the plugin. The author can be a company or an individual developer.
-author: steve
+author: Mikal Shaikh
 
 # Copyright information.
-copyright: Copyright © 2023 steve. All rights reserved.
+copyright: Copyright © 2023 Mikal Shaikh. All rights reserved.
 
 
 # ==================================================================================================

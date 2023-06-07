@@ -1,7 +1,5 @@
 ﻿namespace Loupedeck.GameControlPlugin.Commands
 {
-    using System;
-
     internal class ButtonOff : ButtonCommand
     {
         public ButtonOff()
@@ -27,7 +25,10 @@
                 GameControlPlugin.InWarning = false;
             }
 
-            GameControlPlugin.joystick.SetBtn(false, GameControlPlugin.id, (uint)commandInfo.Value);
+            Joystick joystick = JoystickManager.GetJoystick(actionParameter);
+
+            joystick.SetBtn(false, (uint)commandInfo.Value);
+            
             this.ActionImageChanged(actionParameter);
         }
     }
