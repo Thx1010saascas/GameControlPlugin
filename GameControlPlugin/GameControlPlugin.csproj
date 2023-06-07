@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+    <PropertyGroup>
+        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+        <ProjectGuid>{3B611B37-8B82-4D74-8CAD-8EE57E62C57F}</ProjectGuid>
+        <OutputType>Library</OutputType>
+        <AppDesignerFolder>Properties</AppDesignerFolder>
+        <RootNamespace>Loupedeck.GameControlPlugin</RootNamespace>
+        <AssemblyName>GameControlPlugin</AssemblyName>
+        <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
+        <FileAlignment>512</FileAlignment>
+    </PropertyGroup>
+    <PropertyGroup>
+        <BaseIntermediateOutputPath>$(SolutionDir)..\obj\</BaseIntermediateOutputPath>
+        <BaseOutputPath>$(SolutionDir)..\bin\</BaseOutputPath>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>full</DebugType>
+        <Optimize>false</Optimize>
+        <OutputPath Condition="$(OS) == 'Windows_NT'">$(LocalAppData)\Loupedeck\Plugins\GameControl\win\</OutputPath>
+        <OutputPath Condition="$(OS) != 'Windows_NT'">$(HOME)/.local/share/Loupedeck/Plugins/GameControl/mac/</OutputPath>
+        <DefineConstants>DEBUG;TRACE</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+        <DebugType>pdbonly</DebugType>
+        <Optimize>true</Optimize>
+        <OutputPath Condition="$(OS) == 'Windows_NT'">$(BaseOutputPath)$(Configuration)\win\</OutputPath>
+        <OutputPath Condition="$(OS) != 'Windows_NT'">$(BaseOutputPath)$(Configuration)/mac/</OutputPath>
+        <DefineConstants>TRACE</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+    </PropertyGroup>
+    <ItemGroup>
+        <Reference Include="PluginApi, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+            <SpecificVersion>False</SpecificVersion>
+            <HintPath Condition="$(OS) == 'Windows_NT'">C:\Program Files (x86)\Loupedeck\Loupedeck2\PluginApi.dll</HintPath>
+            <HintPath Condition="$(OS) != 'Windows_NT'">/Applications/Loupedeck.app/Contents/MonoBundle/PluginApi.dll</HintPath>
+        </Reference>
+        <Reference Include="System" />
+        <Reference Include="System.Core" />
+        <Reference Include="System.Web" />
+        <Reference Include="System.Xml.Linq" />
+        <Reference Include="System.Data.DataSetExtensions" />
+        <Reference Include="Microsoft.CSharp" />
+        <Reference Include="System.Data" />
+        <Reference Include="System.Net.Http" />
+        <Reference Include="System.Xml" />
+        <Reference Include="vJoy.Wrapper, Version=1.0.0.5, Culture=neutral, processorArchitecture=MSIL">
+          <HintPath>..\packages\vJoy.Wrapper.1.0.0.5\lib\netstandard2.0\vJoy.Wrapper.dll</HintPath>
+        </Reference>
+        <Reference Include="vJoyInterfaceWrap, Version=0.2.1.6, Culture=neutral, processorArchitecture=MSIL">
+          <HintPath>..\packages\vJoy.Wrapper.1.0.0.5\lib\netstandard2.0\vJoyInterfaceWrap.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+    <ItemGroup>
+        <Compile Include="Adjustments\AxisAdjustment.cs" />
+        <Compile Include="Adjustments\AxisRXAdjustment.cs" />
+        <Compile Include="Adjustments\AxisRYAdjustment.cs" />
+        <Compile Include="Adjustments\AxisRZAdjustment.cs" />
+        <Compile Include="Adjustments\AxisSL0Adjustment.cs" />
+        <Compile Include="Adjustments\AxisSL1Adjustment.cs" />
+        <Compile Include="Adjustments\AxisXAdjustment.cs" />
+        <Compile Include="Adjustments\AxisYAdjustment.cs" />
+        <Compile Include="Adjustments\AxisZAdjustment.cs" />
+        <Compile Include="CommandInfoType.cs" />
+        <Compile Include="Commands\AxisRX.cs" />
+        <Compile Include="Commands\AxisRY.cs" />
+        <Compile Include="Commands\AxisRZ.cs" />
+        <Compile Include="Commands\AxisSL0.cs" />
+        <Compile Include="Commands\AxisSL1.cs" />
+        <Compile Include="Commands\AxisX.cs" />
+        <Compile Include="Commands\AxisY.cs" />
+        <Compile Include="Commands\AxisZ.cs" />
+        <Compile Include="Commands\ButtonCommand.cs" />
+        <Compile Include="Commands\ButtonOff.cs" />
+        <Compile Include="Commands\ButtonOn.cs" />
+        <Compile Include="Commands\ButtonPress.cs" />
+        <Compile Include="Commands\ButtonToggleOnOff.cs" />
+        <Compile Include="Commands\ButtonToggleOnOffOn.cs" />
+        <Compile Include="Commands\ButtonToggleOnOn.cs" />
+        <Compile Include="Commands\ButtonToggleOnOnOn.cs" />
+        <Compile Include="Commands\AxisButtonCommand.cs" />
+        <Compile Include="Commands\Pov1Press.cs" />
+        <Compile Include="Commands\Pov2Press.cs" />
+        <Compile Include="Commands\Pov3Press.cs" />
+        <Compile Include="Commands\Pov4Press.cs" />
+        <Compile Include="Commands\PovCommand.cs" />
+        <Compile Include="Properties\AssemblyInfo.cs" />
+        <Compile Include="GameControlApplication.cs" />
+        <Compile Include="GameControlPlugin.cs" />
+        <Compile Include="Helpers\PluginLog.cs" />
+    </ItemGroup>
+    <ItemGroup>
+        <None Include="metadata\LoupedeckPackage.yaml" />
+        <None Include="packages.config" />
+    </ItemGroup>
+    <ItemGroup>
+        <None Include="App.config" />
+    </ItemGroup>
+    <ItemGroup>
+      <EmbeddedResource Include="Resources\BlackRoundButton.png" />
+      <EmbeddedResource Include="Resources\BlackSquareButton.png" />
+      <EmbeddedResource Include="Resources\BlackSquareCCWButton.png" />
+      <EmbeddedResource Include="Resources\BlackSquareCWButton.png" />
+      <EmbeddedResource Include="Resources\BlackSquareDownButton.png" />
+      <EmbeddedResource Include="Resources\BlackSquareLeftButton.png" />
+      <EmbeddedResource Include="Resources\BlackSquareRightButton.png" />
+      <EmbeddedResource Include="Resources\BlackSquareUpButton.png" />
+      <EmbeddedResource Include="Resources\GrayRotary.png" />
+      <EmbeddedResource Include="Resources\GrayRoundButton.png" />
+      <EmbeddedResource Include="Resources\GraySquareButton.png" />
+      <EmbeddedResource Include="Resources\Icon16x16.png" />
+      <EmbeddedResource Include="Resources\Icon256x256.png" />
+      <EmbeddedResource Include="Resources\Icon32x32.png" />
+      <EmbeddedResource Include="Resources\Icon48x48.png" />
+      <EmbeddedResource Include="Resources\RedRoundButton.png" />
+      <EmbeddedResource Include="Resources\ToggleDownDark.png" />
+      <EmbeddedResource Include="Resources\ToggleMiddleDark.png" />
+      <EmbeddedResource Include="Resources\ToggleOnOffDownDark.png" />
+      <EmbeddedResource Include="Resources\ToggleOnOffOnDownDark.png" />
+      <EmbeddedResource Include="Resources\ToggleOnOffOnMiddleDark.png" />
+      <EmbeddedResource Include="Resources\ToggleOnOffOnUpDark.png" />
+      <EmbeddedResource Include="Resources\ToggleOnOffUpDark.png" />
+      <EmbeddedResource Include="Resources\ToggleOnOnDownDark.png" />
+      <EmbeddedResource Include="Resources\ToggleOnOnOnDownDark.png" />
+      <EmbeddedResource Include="Resources\ToggleOnOnOnMiddleDark.png" />
+      <EmbeddedResource Include="Resources\ToggleOnOnOnUpDark.png" />
+      <EmbeddedResource Include="Resources\ToggleOnOnUpDark.png" />
+      <EmbeddedResource Include="Resources\ToggleUpDark.png" />
+    </ItemGroup>
+    <ItemGroup>
+      <Content Include="vJoyInterface.dll">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+    <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+    <PropertyGroup>
+        <PostBuildEvent Condition="$(OS) == 'Windows_NT'">call "$(ProjectDir)BuildEvents\postbuild.cmd" "$(ProjectDir)" "$(TargetDir)"</PostBuildEvent>
+        <PostBuildEvent Condition="$(OS) != 'Windows_NT'">sh "$(ProjectDir)BuildEvents\postbuild" "$(ProjectDir)" "$(TargetDir)"</PostBuildEvent>
+    </PropertyGroup>
+</Project>
