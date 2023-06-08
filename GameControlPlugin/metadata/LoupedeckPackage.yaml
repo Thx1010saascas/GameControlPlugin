@@ -18,10 +18,10 @@ pluginFileName: GameControlPlugin.dll
 version: 0.6
 
 # Author of the plugin. The author can be a company or an individual developer.
-author: Mikal Shaikh
+author: Mikal Shaikh, Steven White
 
 # Copyright information.
-copyright: Copyright © 2023 Mikal Shaikh. All rights reserved.
+copyright: Copyright © 2023 Mikal Shaikh and Steven White. All rights reserved.
 
 
 # ==================================================================================================

@@ -135,9 +135,12 @@
       <EmbeddedResource Include="Resources\ToggleUpDark.png" />
     </ItemGroup>
     <ItemGroup>
-      <Content Include="vJoyInterface.dll">
+      <Content Include="README.md">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
+      <None Include="vJoyInterface.dll">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <PropertyGroup>

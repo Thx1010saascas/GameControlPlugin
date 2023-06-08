@@ -33,7 +33,7 @@
             {
                 bitmapBuilder.SetBackgroundImage(EmbeddedResources.ReadImage(commandInfo.ButtonPath));
                 if (commandInfo.DrawNumbers)
-                    bitmapBuilder.DrawText(string.Format("{0}", commandInfo.Value), fontSize: 20);
+                    bitmapBuilder.DrawText($"{commandInfo.Value}", fontSize: 20);
                 if (commandInfo.Label != "")
                 {
                     bitmapBuilder.FillRectangle(0, (int)(commandInfo.LabelPos - Math.Round(commandInfo.LabelSize * commandInfo.LabelSize / 28.0)), 80, commandInfo.LabelSize, commandInfo.LabelBackgroundColor);

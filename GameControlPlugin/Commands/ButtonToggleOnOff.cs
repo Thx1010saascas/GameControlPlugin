@@ -27,9 +27,9 @@
 
             Joystick joystick = JoystickManager.GetJoystick(actionParameter);
 
-            GameControlPlugin.buttons[commandInfo.Value] = !GameControlPlugin.buttons[commandInfo.Value];
+            GameControlPlugin.Buttons[commandInfo.Value] = !GameControlPlugin.Buttons[commandInfo.Value];
             
-            joystick.SetBtn(GameControlPlugin.buttons[commandInfo.Value], (uint)commandInfo.Value);
+            joystick.SetBtn(GameControlPlugin.Buttons[commandInfo.Value], (uint)commandInfo.Value);
             
             this.ActionImageChanged(actionParameter);
         }
@@ -55,7 +55,7 @@
 
             using (BitmapBuilder bitmapBuilder = new BitmapBuilder(imageSize))
             {
-                if (GameControlPlugin.buttons[commandInfo.Value])
+                if (GameControlPlugin.Buttons[commandInfo.Value])
                 {
                     if (commandInfo.ToggleAsButton)
                         bitmapBuilder.SetBackgroundImage(EmbeddedResources.ReadImage(commandInfo.ButtonPath));
@@ -70,9 +70,9 @@
                 if (commandInfo.DrawNumbers)
                 {
                     if (commandInfo.ToggleAsButton)
-                        bitmapBuilder.DrawText(string.Format("{0}", commandInfo.Value), fontSize: 20);
+                        bitmapBuilder.DrawText($"{commandInfo.Value}", fontSize: 20);
                     else
-                        bitmapBuilder.DrawText(string.Format("{0}", commandInfo.Value), -3, -5, 20, 39, fontSize: 10, lineHeight: 18);
+                        bitmapBuilder.DrawText($"{commandInfo.Value}", -3, -5, 20, 39, fontSize: 10, lineHeight: 18);
                 }
 
                 if (commandInfo.Label != "")
@@ -81,7 +81,7 @@
                     bitmapBuilder.DrawText(commandInfo.Label ?? "", 0, commandInfo.LabelPos - 14, 80, commandInfo.LabelSize + 6, commandInfo.LabelColor, commandInfo.LabelSize, 18);
                 }
 
-                if (!GameControlPlugin.buttons[commandInfo.Value] && commandInfo.ToggleAsButton)
+                if (!GameControlPlugin.Buttons[commandInfo.Value] && commandInfo.ToggleAsButton)
                     bitmapBuilder.FillRectangle(0, 0, 80, 80, new BitmapColor(0, 0, 0, 155));
                 return bitmapBuilder.ToImage();
             }

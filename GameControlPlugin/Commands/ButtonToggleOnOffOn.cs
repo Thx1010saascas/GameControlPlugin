@@ -25,26 +25,26 @@
                 GameControlPlugin.InWarning = false;
             }
 
-            if (GameControlPlugin.buttons[commandInfo.Value])
+            if (GameControlPlugin.Buttons[commandInfo.Value])
             {
-                GameControlPlugin.buttons[commandInfo.Value] = false;
-                GameControlPlugin.buttons[commandInfo.Value + 1] = false;
+                GameControlPlugin.Buttons[commandInfo.Value] = false;
+                GameControlPlugin.Buttons[commandInfo.Value + 1] = false;
             }
-            else if (GameControlPlugin.buttons[commandInfo.Value + 1])
+            else if (GameControlPlugin.Buttons[commandInfo.Value + 1])
             {
-                GameControlPlugin.buttons[commandInfo.Value] = true;
-                GameControlPlugin.buttons[commandInfo.Value + 1] = false;
+                GameControlPlugin.Buttons[commandInfo.Value] = true;
+                GameControlPlugin.Buttons[commandInfo.Value + 1] = false;
             }
             else
             {
-                GameControlPlugin.buttons[commandInfo.Value] = false;
-                GameControlPlugin.buttons[commandInfo.Value + 1] = true;
+                GameControlPlugin.Buttons[commandInfo.Value] = false;
+                GameControlPlugin.Buttons[commandInfo.Value + 1] = true;
             }
 
             Joystick joystick = JoystickManager.GetJoystick(actionParameter);
 
-            joystick.SetBtn(GameControlPlugin.buttons[commandInfo.Value], (uint)commandInfo.Value);
-            joystick.SetBtn(GameControlPlugin.buttons[commandInfo.Value + 1], (uint)(commandInfo.Value + 1));
+            joystick.SetBtn(GameControlPlugin.Buttons[commandInfo.Value], (uint)commandInfo.Value);
+            joystick.SetBtn(GameControlPlugin.Buttons[commandInfo.Value + 1], (uint)(commandInfo.Value + 1));
             
             this.ActionImageChanged(actionParameter);
         }
@@ -69,14 +69,15 @@
 
             using (BitmapBuilder bitmapBuilder = new BitmapBuilder(imageSize))
             {
-                if (GameControlPlugin.buttons[commandInfo.Value])
+                if (GameControlPlugin.Buttons[commandInfo.Value])
                     bitmapBuilder.SetBackgroundImage(EmbeddedResources.ReadImage(commandInfo.DrawToggleIndicators ? GameControlPlugin.ToggleOnOffOnUpResourcePath : GameControlPlugin.ToggleUpResourcePath));
-                else if (GameControlPlugin.buttons[commandInfo.Value + 1])
+                else if (GameControlPlugin.Buttons[commandInfo.Value + 1])
                     bitmapBuilder.SetBackgroundImage(EmbeddedResources.ReadImage(commandInfo.DrawToggleIndicators ? GameControlPlugin.ToggleOnOffOnDownResourcePath : GameControlPlugin.ToggleDownResourcePath));
                 else
                     bitmapBuilder.SetBackgroundImage(EmbeddedResources.ReadImage(commandInfo.DrawToggleIndicators ? GameControlPlugin.ToggleOnOffOnMiddleResourcePath : GameControlPlugin.ToggleMiddleResourcePath));
                 if (commandInfo.DrawNumbers)
-                    bitmapBuilder.DrawText(string.Format("{0}\n \n{1}", commandInfo.Value, commandInfo.Value + 1), -3, -5, 20, 80, fontSize: 10, lineHeight: 18);
+                    bitmapBuilder.DrawText($"{commandInfo.Value}\n \n{commandInfo.Value + 1}", -3, -5, 20, 80, fontSize: 10, lineHeight: 18);
+                
                 if (commandInfo.Label != "")
                 {
                     bitmapBuilder.FillRectangle(0, commandInfo.LabelPos - commandInfo.LabelSize / 2, 80, commandInfo.LabelSize, commandInfo.LabelBackgroundColor);

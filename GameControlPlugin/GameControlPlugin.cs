@@ -6,7 +6,7 @@ namespace Loupedeck.GameControlPlugin
 
     public class GameControlPlugin : Plugin
     {
-        public static bool[] buttons = new bool[200];
+        public static readonly bool[] Buttons = new bool[200];
         public static bool DefaultDrawNumbers = true;
         public static bool DefaultDrawToggleIndicators = true;
         public static BitmapColor DefaultLabelBackgroundColor = BitmapColor.Transparent;
@@ -69,8 +69,7 @@ namespace Loupedeck.GameControlPlugin
             InWarning = false;
             
             JoystickManager.Initialise(this);
-            
-            int result1 = 1;
+
             string pluginDataDirectory = this.GetPluginDataDirectory();
             if (IoHelpers.EnsureDirectoryExists(pluginDataDirectory))
             {
@@ -245,8 +244,7 @@ namespace Loupedeck.GameControlPlugin
                                                     DefaultLabelBackgroundColor = new BitmapColor(200, 50, 50);
                                                     continue;
                                                 default:
-                                                    uint result2 = 0;
-                                                    if (!uint.TryParse(lower2, out result2))
+                                                    if (!uint.TryParse(lower2, out uint result2))
                                                     {
                                                         this.OnPluginStatusChanged(Loupedeck.PluginStatus.Error, "Invalid Default Label Background Color. Fix in settings.txt and restart.");
                                                         continue;
@@ -281,8 +279,7 @@ namespace Loupedeck.GameControlPlugin
                                                     DefaultLabelColor = BitmapColor.White;
                                                     continue;
                                                 default:
-                                                    uint result3 = 0;
-                                                    if (!uint.TryParse(lower2, out result3))
+                                                    if (!uint.TryParse(lower2, out uint result3))
                                                     {
                                                         this.OnPluginStatusChanged(Loupedeck.PluginStatus.Error, "Invalid Default Label Color. Fix in settings.txt and restart.");
                                                         continue;
@@ -353,7 +350,7 @@ namespace Loupedeck.GameControlPlugin
                                                     continue;
                                             }
                                         case "vjoy number":
-                                            if (int.TryParse(lower2, out result1))
+                                            if (int.TryParse(lower2, out int result1))
                                             {
                                                 if (result1 > 0 && result1 < 17)
                                                 {
@@ -422,32 +419,30 @@ namespace Loupedeck.GameControlPlugin
 
         public static CommandInfoType GetCommandInfo(string parameter)
         {
-            CommandInfoType commandInfo = new CommandInfoType();
-            commandInfo.Value = -1;
-            commandInfo.Label = "";
-            commandInfo.LabelBackgroundColor = DefaultLabelBackgroundColor;
-            commandInfo.LabelColor = DefaultLabelColor;
-            commandInfo.LabelSize = DefaultLabelSize;
-            commandInfo.LabelPos = DefaultLabelPos;
-            commandInfo.DrawNumbers = DefaultDrawNumbers;
-            commandInfo.DrawToggleIndicators = DefaultDrawToggleIndicators;
-            commandInfo.ButtonPath = DefaultButtonPath;
-            commandInfo.RotaryPath = DefaultRotaryPath;
-            commandInfo.DXSendType = DefaultDXSendType;
-            commandInfo.ToggleAsButton = DefaultToggleAsButton;
-            string[] strArray1;
-            if (parameter != null)
-                strArray1 = parameter.Split(";");
-            else
-                strArray1 = new string[1] { "" };
+            CommandInfoType commandInfo = new CommandInfoType { 
+                Value = -1, 
+                Label = "", 
+                LabelBackgroundColor = DefaultLabelBackgroundColor, 
+                LabelColor = DefaultLabelColor,
+                LabelSize = DefaultLabelSize,
+                LabelPos = DefaultLabelPos,
+                DrawNumbers = DefaultDrawNumbers,
+                DrawToggleIndicators = DefaultDrawToggleIndicators,
+                ButtonPath = DefaultButtonPath,
+                RotaryPath = DefaultRotaryPath,
+                DXSendType = DefaultDXSendType,
+                ToggleAsButton = DefaultToggleAsButton
+            };
+            
+            string[] strArray1 = parameter != null ? parameter.Split(";") : new string[1] { "" };
+            
             for (int index = 0; index < strArray1.Length; ++index)
             {
-                int result1 = -1;
                 string[] strArray2 = strArray1[index].Split("=");
                 string lower1 = strArray2[0].Trim().ToLower();
                 if (strArray2.Length == 1)
                 {
-                    if (int.TryParse(lower1, out result1))
+                    if (int.TryParse(lower1, out int result1))
                     {
                         commandInfo.Value = result1;
                     }
@@ -466,7 +461,7 @@ namespace Loupedeck.GameControlPlugin
                                 continue;
                             case "f":
                             case "fast":
-                                commandInfo.Value = 500;
+                                commandInfo.Value = 200;
                                 continue;
                             case "l":
                             case "left":
@@ -512,6 +507,8 @@ namespace Loupedeck.GameControlPlugin
                     string lower2 = str.ToLower();
                     switch (lower1)
                     {
+                        case "vjoyid":
+                            continue;
                         case "bt":
                         case "buttontype":
                             switch (lower2)
@@ -645,8 +642,7 @@ namespace Loupedeck.GameControlPlugin
                                     commandInfo.LabelBackgroundColor = BitmapColor.White;
                                     continue;
                                 default:
-                                    uint result2 = 0;
-                                    if (!uint.TryParse(lower2, out result2))
+                                    if (!uint.TryParse(lower2, out uint result2))
                                     {
                                         PluginWarning = "Invalid Color";
                                         PluginWarningStopwatch.Restart();
@@ -685,8 +681,7 @@ namespace Loupedeck.GameControlPlugin
                                     commandInfo.LabelColor = BitmapColor.White;
                                     continue;
                                 default:
-                                    uint result3 = 0;
-                                    if (!uint.TryParse(lower2, out result3))
+                                    if (!uint.TryParse(lower2, out uint result3))
                                     {
                                         PluginWarning = "Invalid Color";
                                         PluginWarningStopwatch.Restart();
@@ -723,8 +718,7 @@ namespace Loupedeck.GameControlPlugin
                             }
                         case "labelsize":
                         case "ls":
-                            int result4 = 14;
-                            if (!int.TryParse(lower2, out result4))
+                            if (!int.TryParse(lower2, out int result4))
                             {
                                 PluginWarning = "Invalid Label Size (must be a number)";
                                 PluginWarningStopwatch.Restart();

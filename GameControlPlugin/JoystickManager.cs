@@ -11,8 +11,8 @@
         private static Plugin _plugin;
         private static readonly vJoy _vJoy = new vJoy();
         private static readonly object _lock = new Object();
-        public static IDictionary<uint, Joystick> Joysticks = new Dictionary<uint, Joystick>();
-        public static IDictionary<int, uint> JoystickIdHashMap = new Dictionary<int, uint>();
+        public static readonly IDictionary<uint, Joystick> Joysticks = new Dictionary<uint, Joystick>();
+        public static readonly IDictionary<int, uint> JoystickIdHashMap = new Dictionary<int, uint>();
 
         public static int ButtonPressDelay { get; } = 50;
         public static void SetDefaultJoystickId(uint id) => _defaultJoystickId = id;
@@ -29,7 +29,7 @@
                 {
                     string[] value = settings.Split('=');
 
-                    if (value.Length == 2 && string.CompareOrdinal(value[0].Trim(), "vjoyid") == 0)
+                    if (value.Length == 2 && string.Compare(value[0].Trim(), "vjoyid", StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         id = uint.Parse(value[1]);
                         break;
@@ -111,8 +111,8 @@
                     
                     int centrePoint;
                     joystick.RX = centrePoint = (int)maxValue / 2;
-                    joystick.RX = centrePoint;
-                    joystick.RX = centrePoint;
+                    joystick.RY = centrePoint;
+                    joystick.RZ = centrePoint;
                     joystick.Z = centrePoint;
                     joystick.Y = centrePoint;
                     joystick.X = centrePoint;

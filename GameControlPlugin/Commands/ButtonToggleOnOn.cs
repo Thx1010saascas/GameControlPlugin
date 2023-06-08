@@ -30,15 +30,15 @@
 
             Joystick joystick = JoystickManager.GetJoystick(actionParameter);
 
-            GameControlPlugin.buttons[CommandInfo.Value] = !GameControlPlugin.buttons[CommandInfo.Value];
-            GameControlPlugin.buttons[CommandInfo.Value + 1] = !GameControlPlugin.buttons[CommandInfo.Value];
+            GameControlPlugin.Buttons[CommandInfo.Value] = !GameControlPlugin.Buttons[CommandInfo.Value];
+            GameControlPlugin.Buttons[CommandInfo.Value + 1] = !GameControlPlugin.Buttons[CommandInfo.Value];
             
-            joystick.SetBtn(GameControlPlugin.buttons[CommandInfo.Value], (uint)CommandInfo.Value);
-            joystick.SetBtn(GameControlPlugin.buttons[CommandInfo.Value + 1], (uint)(CommandInfo.Value + 1));
+            joystick.SetBtn(GameControlPlugin.Buttons[CommandInfo.Value], (uint)CommandInfo.Value);
+            joystick.SetBtn(GameControlPlugin.Buttons[CommandInfo.Value + 1], (uint)(CommandInfo.Value + 1));
             
             if (CommandInfo.DXSendType == 0)
             {
-                if (GameControlPlugin.buttons[CommandInfo.Value])
+                if (GameControlPlugin.Buttons[CommandInfo.Value])
                     Task.Delay(JoystickManager.ButtonPressDelay).ContinueWith(t => joystick.SetBtn(false, (uint)CommandInfo.Value));
                 else
                     Task.Delay(JoystickManager.ButtonPressDelay).ContinueWith(t => joystick.SetBtn(false, (uint)(CommandInfo.Value + 1)));
@@ -69,12 +69,12 @@
 
             using (BitmapBuilder bitmapBuilder = new BitmapBuilder(imageSize))
             {
-                if (GameControlPlugin.buttons[commandInfo.Value])
+                if (GameControlPlugin.Buttons[commandInfo.Value])
                     bitmapBuilder.SetBackgroundImage(EmbeddedResources.ReadImage(commandInfo.DrawToggleIndicators ? GameControlPlugin.ToggleOnOnUpResourcePath : GameControlPlugin.ToggleUpResourcePath));
                 else
                     bitmapBuilder.SetBackgroundImage(EmbeddedResources.ReadImage(commandInfo.DrawToggleIndicators ? GameControlPlugin.ToggleOnOnDownResourcePath : GameControlPlugin.ToggleDownResourcePath));
                 if (commandInfo.DrawNumbers)
-                    bitmapBuilder.DrawText(string.Format("{0}\n \n{1}", commandInfo.Value, commandInfo.Value + 1), -3, -5, 20, 80, fontSize: 10, lineHeight: 18);
+                    bitmapBuilder.DrawText($"{commandInfo.Value}\n \n{commandInfo.Value + 1}", -3, -5, 20, 80, fontSize: 10, lineHeight: 18);
                 if (commandInfo.Label != "")
                 {
                     bitmapBuilder.FillRectangle(0, commandInfo.LabelPos - commandInfo.LabelSize / 2, 80, commandInfo.LabelSize, commandInfo.LabelBackgroundColor);
