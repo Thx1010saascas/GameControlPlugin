@@ -27,9 +27,9 @@
                 this.Plugin.OnPluginStatusChanged(PluginStatus.Normal, null);
                 GameControlPlugin.InWarning = false;
             }
-
+            
             DoAdjustment(GameControlPlugin.GetCommandInfo(actionParameter), actionParameter, ticks);
-
+            
             this.ActionImageChanged(actionParameter);
         }
 
@@ -39,6 +39,7 @@
         {
             if (GameControlPlugin.PluginError != "")
                 this.Plugin.OnPluginStatusChanged(PluginStatus.Error, GameControlPlugin.PluginError);
+            
             if (GameControlPlugin.PluginWarning != "" && !GameControlPlugin.InWarning)
             {
                 this.Plugin.OnPluginStatusChanged(PluginStatus.Warning, GameControlPlugin.PluginWarning);

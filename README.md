@@ -88,6 +88,8 @@ The <option name> field, along with their associated <option values> are below:
 	the ButtonType option.  When the toggle is in the off state, the button image is grayed out, indicating that it is off.  <Option Values> are <Option values> are "True" 
 	(or "On" or "Yes") and "False" (or "Off" or "No").
 
+-   "DefaultValue" can be used to default an axis to a specific percentage value on startup. EG: You might want some radios off, loud, etc. 
+
 Notes: 	(i) the quotation marks above are simply for readability and should NOT be inserted in any fields, (ii) all actions are case insensitive, and in most cases 
 		abbreviations are accepted (e.g., "l" for "Label", "bt" for "ButtonType" or "ccw" for "Counterclockwise")
 

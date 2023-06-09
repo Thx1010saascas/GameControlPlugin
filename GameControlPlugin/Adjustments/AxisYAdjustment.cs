@@ -41,6 +41,9 @@
 
             Joystick joystick = JoystickManager.GetJoystick(actionParameter);
 
+            if (joystick.Y == int.MinValue)
+                joystick.Y = JoystickManager.GetAxisDefaultValue(actionParameter) ?? joystick.MaxValue / 2;
+
             return GetAdjustmentValue(joystick.Y, joystick.MaxValue);
         }
     }

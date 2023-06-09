@@ -8,7 +8,7 @@
         {
             this.DisplayName = $"{displayName} (Button)";
             this.GroupName = "Not used";
-            this.MakeProfileAction("text;Enter the amount to change the RX axis (-100..100, Min, Max or Center) and any options:");
+            this.MakeProfileAction("text;Enter the amount to change the axis (-100..100, Min, Max or Center) and any options:");
         }
 
         protected override void RunCommand(string actionParameter)
@@ -16,6 +16,7 @@
             CommandInfoType commandInfo = GameControlPlugin.GetCommandInfo(actionParameter);
             if (GameControlPlugin.PluginError != "")
                 this.Plugin.OnPluginStatusChanged(PluginStatus.Error, GameControlPlugin.PluginError);
+            
             if (GameControlPlugin.PluginWarning != "" && !GameControlPlugin.InWarning)
             {
                 this.Plugin.OnPluginStatusChanged(PluginStatus.Warning, GameControlPlugin.PluginWarning);
@@ -31,18 +32,25 @@
 
             Joystick joystick = JoystickManager.GetJoystick(actionParameter);
 
-            DoCommand(commandInfo, joystick, actionParameter);
+            int value = DoCommand(commandInfo, joystick, actionParameter);
+            
+            string axisName = this.DisplayName.Substring(0, this.DisplayName.StartsWith("SL") ? 3 : 2).TrimEnd();
+            
+            // We may have to use the above value to refresh the axis label with the correct new value. But this does what I want for the moment.  
+            this.Plugin.ExecuteGenericAction($"Loupedeck.GameControlPlugin.Adjustments.Axis{axisName}Adjustment", "", 1);
 
             this.ActionImageChanged(actionParameter);
         }
 
-        protected abstract void DoCommand(CommandInfoType commandInfo, Joystick joystick, String actionParameter);
+        protected abstract int DoCommand(CommandInfoType commandInfo, Joystick joystick, String actionParameter);
 
         protected override BitmapImage GetCommandImage(string actionParameter, PluginImageSize imageSize)
         {
             CommandInfoType commandInfo = GameControlPlugin.GetCommandInfo(actionParameter);
+            
             if (GameControlPlugin.PluginError != "")
                 this.Plugin.OnPluginStatusChanged(PluginStatus.Error, GameControlPlugin.PluginError);
+            
             if (GameControlPlugin.PluginWarning != "" && !GameControlPlugin.InWarning)
             {
                 this.Plugin.OnPluginStatusChanged(PluginStatus.Warning, GameControlPlugin.PluginWarning);
@@ -59,6 +67,7 @@
             using (BitmapBuilder bitmapBuilder = new BitmapBuilder(imageSize))
             {
                 bitmapBuilder.SetBackgroundImage(EmbeddedResources.ReadImage(commandInfo.ButtonPath));
+                
                 if (commandInfo.Label != "")
                 {
                     bitmapBuilder.FillRectangle(0, commandInfo.LabelPos - commandInfo.LabelSize / 2, 80, commandInfo.LabelSize, commandInfo.LabelBackgroundColor);

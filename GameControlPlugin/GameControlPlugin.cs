@@ -508,6 +508,7 @@ namespace Loupedeck.GameControlPlugin
                     switch (lower1)
                     {
                         case "vjoyid":
+                        case "defaultvalue":
                             continue;
                         case "bt":
                         case "buttontype":

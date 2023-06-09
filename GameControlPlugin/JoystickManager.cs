@@ -48,7 +48,7 @@
                 {
                     if (!Joysticks.TryGetValue(id, out joystick))
                     {
-                        joystick = MakeJoystick(id);
+                        joystick = MakeJoystick(id, actionParameter);
 
                         Joysticks.Add(id, joystick);
                     }
@@ -58,7 +58,7 @@
             return joystick;
         }
 
-        private static Joystick MakeJoystick(uint id)
+        private static Joystick MakeJoystick(uint id, string actionParameter)
         {
             VjdStat vjdStatus = _vJoy.GetVJDStatus(id);
             
@@ -109,15 +109,6 @@
                     for (uint nBtn = 0; nBtn < joystick.ButtonCount; ++nBtn)
                         _vJoy.SetBtn(false, id, nBtn);
                     
-                    int centrePoint;
-                    joystick.RX = centrePoint = (int)maxValue / 2;
-                    joystick.RY = centrePoint;
-                    joystick.RZ = centrePoint;
-                    joystick.Z = centrePoint;
-                    joystick.Y = centrePoint;
-                    joystick.X = centrePoint;
-                    joystick.SL0 = joystick.SL1 = 0;
-
                     return joystick;
                 case VjdStat.VJD_STAT_BUSY:
                     _plugin.OnPluginStatusChanged(PluginStatus.Error, "vJoy Device is already owned by another feeder. Cannot continue");
@@ -128,6 +119,21 @@
                 default:
                     _plugin.OnPluginStatusChanged(PluginStatus.Error, "vJoy Device general error. Cannot continue");
                     break;
+            }
+
+            return null;
+        }
+
+        public static int? GetAxisDefaultValue(string actionParameter)
+        {
+            foreach(string p in actionParameter.Split(";", StringSplitOptions.RemoveEmptyEntries))
+            {
+                string[] values = p.Split("=");
+
+                if (values.Length == 2 && values[0].Trim().ToLower() == "defaultvalue")
+                {
+                    return int.Parse(values[1]);
+                }
             }
 
             return null;
@@ -148,14 +154,14 @@
         public int MaxValue { get; set; }
         public int ButtonCount { get; set; }
 
-        public int X { get; set; }
-        public int Y { get; set; }
-        public int Z { get; set; }
-        public int RX { get; set; }
-        public int RY { get; set; }
-        public int RZ { get; set; }
-        public int SL0 { get; set; }
-        public int SL1 { get; set; }
+        public int X { get; set; } = int.MinValue;
+        public int Y { get; set; } = int.MinValue;
+        public int Z { get; set; } = int.MinValue;
+        public int RX { get; set; } = int.MinValue;
+        public int RY { get; set; } = int.MinValue;
+        public int RZ { get; set; } = int.MinValue;
+        public int SL0 { get; set; } = int.MinValue;
+        public int SL1 { get; set; } = int.MinValue;
         
         public int ContPovNumber { get; set; }
         public int DiscPovNumber { get; set; }

@@ -9,7 +9,7 @@
         {
         }
 
-        protected override void DoCommand(CommandInfoType commandInfo, Joystick joystick, string actionParameter)
+        protected override int DoCommand(CommandInfoType commandInfo, Joystick joystick, string actionParameter)
         {
             switch (commandInfo.Value)
             {
@@ -31,7 +31,10 @@
                 joystick.SL1 = 0;
             if (joystick.SL1 > joystick.MaxValue)
                 joystick.SL1 = joystick.MaxValue;
+            
             joystick.SetAxis(joystick.SL1, HID_USAGES.HID_USAGE_SL1);
+            
+            return joystick.SL1;
         }
     }
 }
