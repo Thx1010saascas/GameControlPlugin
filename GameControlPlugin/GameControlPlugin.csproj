@@ -59,23 +59,9 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="Adjustments\AxisAdjustment.cs" />
-        <Compile Include="Adjustments\AxisRXAdjustment.cs" />
-        <Compile Include="Adjustments\AxisRYAdjustment.cs" />
-        <Compile Include="Adjustments\AxisRZAdjustment.cs" />
-        <Compile Include="Adjustments\AxisSL0Adjustment.cs" />
-        <Compile Include="Adjustments\AxisSL1Adjustment.cs" />
-        <Compile Include="Adjustments\AxisXAdjustment.cs" />
-        <Compile Include="Adjustments\AxisYAdjustment.cs" />
-        <Compile Include="Adjustments\AxisZAdjustment.cs" />
+        <Compile Include="Adjustments\AxisButtonAdjustment.cs" />
+        <Compile Include="Adjustments\AxisEncoderAdjustment.cs" />
         <Compile Include="CommandInfoType.cs" />
-        <Compile Include="Commands\AxisRX.cs" />
-        <Compile Include="Commands\AxisRY.cs" />
-        <Compile Include="Commands\AxisRZ.cs" />
-        <Compile Include="Commands\AxisSL0.cs" />
-        <Compile Include="Commands\AxisSL1.cs" />
-        <Compile Include="Commands\AxisX.cs" />
-        <Compile Include="Commands\AxisY.cs" />
-        <Compile Include="Commands\AxisZ.cs" />
         <Compile Include="Commands\ButtonCommand.cs" />
         <Compile Include="Commands\ButtonOff.cs" />
         <Compile Include="Commands\ButtonOn.cs" />
@@ -84,12 +70,13 @@
         <Compile Include="Commands\ButtonToggleOnOffOn.cs" />
         <Compile Include="Commands\ButtonToggleOnOn.cs" />
         <Compile Include="Commands\ButtonToggleOnOnOn.cs" />
-        <Compile Include="Commands\AxisButtonCommand.cs" />
+        <Compile Include="Commands\AxisButton.cs" />
         <Compile Include="Commands\Pov1Press.cs" />
         <Compile Include="Commands\Pov2Press.cs" />
         <Compile Include="Commands\Pov3Press.cs" />
         <Compile Include="Commands\Pov4Press.cs" />
         <Compile Include="Commands\PovCommand.cs" />
+        <Compile Include="Helpers\AdjustmentCache.cs" />
         <Compile Include="JoystickManager.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="GameControlApplication.cs" />

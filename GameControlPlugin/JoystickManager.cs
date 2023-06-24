@@ -143,14 +143,14 @@
     public class Joystick
     {
         private vJoy _vJoy;
-        private uint _id;
 
         public Joystick(vJoy joy, uint id)
         {
+            Id = id;
             _vJoy = joy;
-            _id = id;
         }
 
+        public uint Id { get; }
         public int MaxValue { get; set; }
         public int ButtonCount { get; set; }
 
@@ -167,17 +167,17 @@
         public int DiscPovNumber { get; set; }
         public void SetAxis(int value, HID_USAGES hidUsage)
         {
-            _vJoy.SetAxis(value, _id, hidUsage);
+            _vJoy.SetAxis(value, Id, hidUsage);
         }
 
         public void SetBtn(bool value, uint commandInfoValue)
         {
-            _vJoy.SetBtn(value, _id, commandInfoValue);
+            _vJoy.SetBtn(value, Id, commandInfoValue);
         }
 
         public void SetDiscPov(int commandInfoValue, uint pov)
         {
-            _vJoy.SetDiscPov(commandInfoValue, _id, pov);
+            _vJoy.SetDiscPov(commandInfoValue, Id, pov);
         }
     }
 }

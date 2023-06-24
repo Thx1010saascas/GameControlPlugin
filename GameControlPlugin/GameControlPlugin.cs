@@ -6,6 +6,7 @@ namespace Loupedeck.GameControlPlugin
 
     public class GameControlPlugin : Plugin
     {
+        public const string AxisNames = "X, Y, Z, RX, RY, RZ, SL0, SL1";
         public static readonly bool[] Buttons = new bool[200];
         public static bool DefaultDrawNumbers = true;
         public static bool DefaultDrawToggleIndicators = true;
@@ -509,6 +510,9 @@ namespace Loupedeck.GameControlPlugin
                     {
                         case "vjoyid":
                         case "defaultvalue":
+                        case "upbutton":
+                        case "downbutton": 
+                        case "axis":
                             continue;
                         case "bt":
                         case "buttontype":
