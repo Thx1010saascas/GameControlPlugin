@@ -5,14 +5,14 @@
     internal class AxisButtonAdjustment : AxisAdjustment
     {
         public AxisButtonAdjustment()
-            : base("Encoder via Button Presses", $"Adjusts an axis using buttons ({GameControlPlugin.AxisNames})", "Button Axis Adjustment")
+            : base("Encoder via Button Presses", $"Adjusts an axis using buttons (UpButton=X,DownButton=Y for axis {GameControlPlugin.AxisNames})", "Button Axis Adjustment")
         {
         }
 
         protected override void DoAdjustment(CommandInfoType commandInfo, string actionParameter, int ticks)
         {
             Joystick joystick = JoystickManager.GetJoystick(actionParameter);
-            AdjustmentInfo adjustmentInfo = AxisEncoderAdjustment.GetAdjustmentInfo(actionParameter, joystick);
+            AdjustmentInfo adjustmentInfo = GetAdjustmentInfo(actionParameter, joystick);
 
             adjustmentInfo.StickValue += ticks * commandInfo.Value;
 

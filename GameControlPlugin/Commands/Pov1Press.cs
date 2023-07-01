@@ -3,7 +3,7 @@
     internal class Pov1Press : PovCommand
     {
         public Pov1Press()
-            : base("POV1 Press", "text;Enter the direction to press (Up, Down, Left, Right) and any options:")
+            : base("POV 1 Press", "text;Enter the direction to press (Up, Down, Left, Right) and any options:")
         {
         }
 
